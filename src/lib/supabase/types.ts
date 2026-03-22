@@ -12,6 +12,8 @@ export type Profile = {
   bannerUrl?: string;
   bio?: string;
   location?: string;
+  sport?: string;
+  position?: string;
   verified: boolean;
   onboarded: boolean;
   premiumTier: PremiumTier;

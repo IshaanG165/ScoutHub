@@ -15,6 +15,7 @@ export function FeedPostCard({
   body,
   match,
   media,
+  mediaType,
 }: {
   id: string;
   author: { name: string; meta: string; verified: boolean; avatar: string };
@@ -23,7 +24,9 @@ export function FeedPostCard({
   body: string;
   match?: number;
   media?: string;
+  mediaType?: "image" | "video";
 }) {
+  const isVideo = mediaType === "video" || media?.endsWith(".mp4") || media?.endsWith(".webm");
   return (
     <Card className="overflow-hidden">
       <div className="flex items-start gap-3 p-5">
@@ -64,15 +67,29 @@ export function FeedPostCard({
 
       {media && (
         <div className="relative mx-5 mb-4 overflow-hidden rounded-3xl ring-1 ring-black/5">
-          <div
-            className="aspect-[16/9] w-full bg-cover bg-center"
-            style={{ backgroundImage: `url(${media})` }}
-          />
-          <div className="absolute inset-0 grid place-items-center">
-            <div className="grid h-14 w-14 place-items-center rounded-full bg-black/35 text-white ring-4 ring-white/10">
-              <div className="h-0 w-0 border-y-8 border-l-[14px] border-y-transparent border-l-white/90" />
-            </div>
-          </div>
+          {isVideo ? (
+            <video
+              src={media}
+              className="w-full aspect-video object-cover"
+              controls
+              playsInline
+              muted
+              autoPlay
+              loop
+            />
+          ) : (
+            <>
+              <div
+                className="aspect-[16/9] w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${media})` }}
+              />
+              <div className="absolute inset-0 grid place-items-center">
+                <div className="grid h-14 w-14 place-items-center rounded-full bg-black/35 text-white ring-4 ring-white/10">
+                  <div className="h-0 w-0 border-y-8 border-l-[14px] border-y-transparent border-l-white/90" />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
 

@@ -51,6 +51,7 @@ function mapProfile(d: any): Profile {
   return {
     id: d.id, fullName: d.full_name || "", role: d.role, avatarUrl: d.avatar_url || undefined,
     bannerUrl: d.banner_url || undefined, bio: d.bio || "", location: d.location || "",
+    sport: d.sport || "", position: d.position || "",
     verified: d.verified || false, onboarded: d.onboarded || false,
     premiumTier: d.premium_tier || "free", createdAt: d.created_at,
   };

@@ -22,6 +22,8 @@ export default function SignupPage() {
     const [fullName, setFullName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [sport, setSport] = React.useState("Football");
+    const [position, setPosition] = React.useState("");
     const [showPw, setShowPw] = React.useState(false);
     const [error, setError] = React.useState("");
     const [submitting, setSubmitting] = React.useState(false);
@@ -37,7 +39,7 @@ export default function SignupPage() {
       if (!fullName || !email || !password) { setError("Please fill in all fields"); return; }
       if (password.length < 6) { setError("Password must be at least 6 characters"); return; }
       setSubmitting(true);
-      const res = await signUpWithEmail(email, password, fullName, role);
+      const res = await signUpWithEmail(email, password, fullName, role, sport, position);
       if (res.error) { setError(res.error); setSubmitting(false); return; }
       setSuccess(true);
       setSubmitting(false);
@@ -133,6 +135,31 @@ export default function SignupPage() {
                     type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
                     placeholder="E.g. John Doe or FC Zenith"
                     className="h-11 w-full rounded-xl bg-scouthub-tint/60 pl-10 pr-3 text-sm ring-1 ring-black/5 placeholder:text-scouthub-muted focus:outline-none focus:ring-2 focus:ring-scouthub-green/20"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-scouthub-text">Sport</label>
+                  <select
+                    value={sport}
+                    onChange={(e) => setSport(e.target.value)}
+                    className="h-11 w-full rounded-xl bg-scouthub-tint/60 px-3 text-sm ring-1 ring-black/5 focus:outline-none focus:ring-2 focus:ring-scouthub-green/20"
+                  >
+                    <option value="Football">Football</option>
+                    <option value="Basketball">Basketball</option>
+                    <option value="Cricket">Cricket</option>
+                    <option value="Tennis">Tennis</option>
+                    <option value="Rugby">Rugby</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-scouthub-text">Position</label>
+                  <input
+                    type="text" value={position} onChange={(e) => setPosition(e.target.value)}
+                    placeholder="E.g. Striker"
+                    className="h-11 w-full rounded-xl bg-scouthub-tint/60 px-3 text-sm ring-1 ring-black/5 placeholder:text-scouthub-muted focus:outline-none focus:ring-2 focus:ring-scouthub-green/20"
                   />
                 </div>
               </div>

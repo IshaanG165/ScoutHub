@@ -109,23 +109,12 @@ export function Sidebar() {
                   size={44}
                   className="ring-white"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 flex flex-col justify-center">
                   <div className="truncate text-sm font-bold">{displayName}</div>
                   <div className="text-xs font-semibold text-scouthub-gold">
                     {roleMeta}
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between">
-                <div className="text-xs font-medium text-scouthub-muted">
-                  Match Readiness
-                </div>
-                <div className="text-xs font-bold text-scouthub-gold">{readiness}%</div>
-              </div>
-              <Progress value={readiness} className="mt-2" />
-              <div className="mt-2 text-[11px] text-scouthub-muted">
-                Updated today
               </div>
             </Card>
           </Link>

@@ -22,7 +22,14 @@ type AuthState = {
 
 type AuthActions = {
   signInWithEmail: (email: string, password: string) => Promise<{ error?: string }>;
-  signUpWithEmail: (email: string, password: string, fullName: string, role: string) => Promise<{ error?: string }>;
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    fullName: string,
+    role?: string,
+    sport?: string,
+    position?: string
+  ) => Promise<{ error?: string }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error?: string }>;
@@ -143,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return {};
       },
 
-      signUpWithEmail: async (email: string, password: string, fullName: string, role: string = "player") => {
+      signUpWithEmail: async (email: string, password: string, fullName: string, role: string = "player", sport: string = "", position: string = "") => {
         if (!sb) return { error: "Supabase not configured" };
         const { error } = await sb.auth.signUp({
           email,
@@ -151,7 +158,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           options: {
             data: { 
               full_name: fullName,
-              role: role 
+              role: role,
+              sport: sport,
+              position: position
             },
           },
         });

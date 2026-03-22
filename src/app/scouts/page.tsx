@@ -4,7 +4,7 @@ import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, MapPin, Filter, Star, Eye } from "lucide-react";
+import { Search, MapPin, Filter, Star, Eye, Briefcase, Activity, Target } from "lucide-react";
 
 import { AppShell } from "@/components/shell/AppShell";
 import { Card } from "@/components/ui/Card";
@@ -18,14 +18,14 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/lib/supabase/auth";
 import { fetchPlayersForDiscovery } from "@/lib/supabase/db";
 
-const positions = ["All", "Goalkeeper", "Centre Back", "Full Back", "Midfielder", "Winger", "Striker"];
+const sports = ["All", "Football", "Basketball", "Cricket", "Tennis", "Rugby"];
 
 function ScoutsContent() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q") || "";
   const { supabase } = useAuth();
   const [search, setSearch] = React.useState(initialQ);
-  const [activePos, setActivePos] = React.useState("All");
+  const [activeSport, setActiveSport] = React.useState("All");
   const [players, setPlayers] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -34,7 +34,6 @@ function ScoutsContent() {
       setLoading(true);
       const data = await fetchPlayersForDiscovery({
         search: search || undefined,
-        position: activePos !== "All" ? activePos : undefined,
         limit: 20,
       }, supabase);
       setPlayers(data);
@@ -42,17 +41,17 @@ function ScoutsContent() {
     }
     const t = setTimeout(load, 300);
     return () => clearTimeout(t);
-  }, [search, activePos, supabase]);
+  }, [search, activeSport, supabase]);
 
   // Demo data when no Supabase data available
   const displayPlayers = players.length > 0 ? players : (loading ? [] : [
-    { profile: { id: "1", fullName: "Marcus Johnson", avatarUrl: "https://images.unsplash.com/photo-1520975867597-0c8f26f86784?auto=format&fit=crop&w=256&q=80", location: "Sydney, NSW", verified: true }, player: { position: "Striker", ageGroup: "U18", currentClub: "Sydney FC Academy", matchReadiness: 92, availability: "available" } },
-    { profile: { id: "2", fullName: "Kai Tanaka", avatarUrl: "https://images.unsplash.com/photo-1520975958225-15f85f3a2f8f?auto=format&fit=crop&w=256&q=80", location: "Melbourne, VIC", verified: false }, player: { position: "Winger", ageGroup: "U18", currentClub: "Melbourne Victory", matchReadiness: 85, availability: "available" } },
-    { profile: { id: "3", fullName: "Alex Rivera", avatarUrl: "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=256&q=80", location: "Brisbane, QLD", verified: true }, player: { position: "Midfielder", ageGroup: "U21", currentClub: "Brisbane Roar", matchReadiness: 78, availability: "limited" } },
-    { profile: { id: "4", fullName: "Jordan Blake", avatarUrl: null, location: "Perth, WA", verified: false }, player: { position: "Goalkeeper", ageGroup: "U18", currentClub: "Perth Glory", matchReadiness: 70, availability: "available" } },
-    { profile: { id: "5", fullName: "Sam Williams", avatarUrl: null, location: "Adelaide, SA", verified: false }, player: { position: "Centre Back", ageGroup: "Senior", currentClub: "Adelaide United", matchReadiness: 88, availability: "available" } },
-    { profile: { id: "6", fullName: "Riley Chen", avatarUrl: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=256&q=80", location: "Gold Coast, QLD", verified: false }, player: { position: "Full Back", ageGroup: "U16", currentClub: "Gold Coast FC", matchReadiness: 65, availability: "available" } },
-  ]);
+    { profile: { id: "1", fullName: "Marcus Johnson", avatarUrl: "https://images.unsplash.com/photo-1520975867597-0c8f26f86784?auto=format&fit=crop&w=256&q=80", location: "Sydney, NSW", verified: true, role: "scout" }, player: { sport: "Basketball", availability: "available" } },
+    { profile: { id: "2", fullName: "Kai Tanaka", avatarUrl: "https://images.unsplash.com/photo-1520975958225-15f85f3a2f8f?auto=format&fit=crop&w=256&q=80", location: "Melbourne, VIC", verified: false, role: "player" }, player: { sport: "Football", ageGroup: "U18", currentClub: "Melbourne Victory", availability: "available" } },
+    { profile: { id: "3", fullName: "Alex Rivera", avatarUrl: "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=256&q=80", location: "Brisbane, QLD", verified: true, role: "player" }, player: { sport: "Cricket", ageGroup: "U21", currentClub: "Brisbane Roar", availability: "limited" } },
+    { profile: { id: "4", fullName: "Jordan Blake", avatarUrl: null, location: "Perth, WA", verified: false, role: "scout" }, player: { sport: "Tennis", availability: "available" } },
+    { profile: { id: "5", fullName: "Sam Williams", avatarUrl: null, location: "Adelaide, SA", verified: false, role: "player" }, player: { sport: "Football", ageGroup: "Senior", currentClub: "Adelaide United", availability: "available" } },
+    { profile: { id: "6", fullName: "Riley Chen", avatarUrl: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=256&q=80", location: "Gold Coast, QLD", verified: false, role: "scout" }, player: { sport: "Rugby", availability: "available" } },
+  ]).filter(p => activeSport === "All" || (p.profile as any)?.sport === activeSport || (p.player as any)?.sport === activeSport || (p.player as any)?.position === activeSport);
 
   return (
     <AppShell>
@@ -60,8 +59,8 @@ function ScoutsContent() {
         <Card className="p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Discover Players</h1>
-              <p className="mt-1 text-sm text-scouthub-muted">Find and shortlist talent across all regions</p>
+              <h1 className="text-2xl font-extrabold tracking-tight">Discover Profiles</h1>
+              <p className="mt-1 text-sm text-scouthub-muted">Find and shortlist scouts and players across all sports and regions</p>
             </div>
           </div>
           <div className="relative mt-4">
@@ -71,8 +70,8 @@ function ScoutsContent() {
               className="h-11 w-full rounded-xl bg-scouthub-tint/60 pl-10 pr-3 text-sm ring-1 ring-black/5 placeholder:text-scouthub-muted focus:outline-none focus:ring-2 focus:ring-scouthub-green/20" />
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {positions.map((p) => (
-              <Pill key={p} active={activePos === p} onClick={() => setActivePos(p)}>{p}</Pill>
+            {sports.map((s) => (
+              <Pill key={s} active={activeSport === s} onClick={() => setActiveSport(s)}>{s}</Pill>
             ))}
           </div>
         </Card>
@@ -95,24 +94,21 @@ function ScoutsContent() {
                       <h3 className="truncate text-sm font-extrabold">{p.profile.fullName}</h3>
                       {p.profile.verified && <Star className="h-4 w-4 text-scouthub-gold fill-scouthub-gold" />}
                     </div>
-                    <div className="mt-1 flex flex-wrap gap-2">
-                      {p.player?.position && <Badge>{p.player.position}</Badge>}
-                      {p.player?.ageGroup && <Badge className="bg-scouthub-gold/10 text-scouthub-gold ring-scouthub-gold/20">{p.player.ageGroup}</Badge>}
+                    <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-semibold">
+                      <Badge className="capitalize bg-scouthub-tint text-scouthub-dark"><Briefcase className="w-3 h-3 mr-1" />{p.profile.role || "Member"}</Badge>
+                      {(p.profile.sport || p.player?.sport) && <Badge className="bg-scouthub-gold/10 text-scouthub-gold ring-scouthub-gold/20"><Activity className="w-3 h-3 mr-1" />{p.profile.sport || p.player.sport}</Badge>}
+                      {(p.profile.position || p.player?.position) && <Badge className="bg-scouthub-gold/10 text-scouthub-gold ring-scouthub-gold/20"><Target className="w-3 h-3 mr-1" />{p.profile.position || p.player.position}</Badge>}
+                      {p.player?.ageGroup && <Badge className="bg-scouthub-green/10 text-scouthub-green ring-scouthub-green/20">{p.player.ageGroup}</Badge>}
                     </div>
                     {p.profile.location && (
-                      <div className="mt-2 flex items-center gap-1 text-xs text-scouthub-muted">
+                      <div className="mt-3 flex items-center gap-1 text-xs text-scouthub-muted">
                         <MapPin className="h-3.5 w-3.5" /> {p.profile.location}
                       </div>
                     )}
-                    {p.player?.matchReadiness != null && (
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-scouthub-muted">Readiness</span>
-                          <span className="font-bold text-scouthub-gold">{p.player.matchReadiness}%</span>
-                        </div>
-                        <Progress value={p.player.matchReadiness} className="mt-1" />
-                      </div>
-                    )}
+                    
+                    <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between">
+                      <Button variant="ghost" size="sm" className="w-full text-xs font-bold text-scouthub-green hover:bg-scouthub-green/10">View Profile</Button>
+                    </div>
                   </div>
                 </Card>
               </Link>

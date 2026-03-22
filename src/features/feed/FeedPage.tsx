@@ -97,7 +97,7 @@ export function FeedPage() {
           id="player-kai-tanaka-training"
           author={{
             name: "Kai Tanaka",
-            meta: "Right Wing · Melbourne",
+            meta: "Point Guard · Melbourne",
             verified: false,
             avatar:
               "https://images.unsplash.com/photo-1520975958225-15f85f3a2f8f?auto=format&fit=crop&w=256&q=80",
@@ -105,7 +105,8 @@ export function FeedPage() {
           time="12h ago"
           title="Training Session — Speed & Agility Drills"
           body="Small improvements this week: first-step acceleration and repeat sprint consistency. Clips attached."
-          media="https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80"
+          media="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+          mediaType="video"
         />
 
         <FeedPostCard
@@ -118,8 +119,10 @@ export function FeedPage() {
               "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=256&q=80",
           }}
           time="1d ago"
-          title="What we look for in U18 forwards"
-          body="Movement without the ball, scanning before receiving, and repeatability under pressure. Profiles with consistent match footage stand out."
+          title="What we look for in versatile athletes"
+          body="Movement without the ball, scanning before receiving, and repeatability under pressure. Profiles with consistent match footage stand out. Check out this phenomenal breakdown."
+          media="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+          mediaType="video"
         />
           </div>
         </div>

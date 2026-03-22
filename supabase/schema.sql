@@ -334,148 +334,192 @@ create index if not exists idx_player_profiles_availability on public.player_pro
 
 -- Profiles: anyone can read, owners can update
 alter table public.profiles enable row level security;
+
 drop policy if exists "Profiles are viewable by everyone" on public.profiles;
 create policy "Profiles are viewable by everyone" on public.profiles for select using (true);
+
 drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
 
 -- Player profiles
 alter table public.player_profiles enable row level security;
+
 drop policy if exists "Player profiles viewable by all" on public.player_profiles;
 create policy "Player profiles viewable by all" on public.player_profiles for select using (true);
+
 drop policy if exists "Players can manage own" on public.player_profiles;
 create policy "Players can manage own" on public.player_profiles for all using (auth.uid() = id);
 
 -- Player stats
 alter table public.player_stats enable row level security;
+
 drop policy if exists "Player stats viewable by all" on public.player_stats;
 create policy "Player stats viewable by all" on public.player_stats for select using (true);
+
 drop policy if exists "Players manage own stats" on public.player_stats;
 create policy "Players manage own stats" on public.player_stats for all using (auth.uid() = player_id);
 
 -- Player highlights
 alter table public.player_highlights enable row level security;
+
 drop policy if exists "Highlights viewable by all" on public.player_highlights;
 create policy "Highlights viewable by all" on public.player_highlights for select using (true);
+
 drop policy if exists "Players manage own highlights" on public.player_highlights;
 create policy "Players manage own highlights" on public.player_highlights for all using (auth.uid() = player_id);
 
 -- Player achievements
 alter table public.player_achievements enable row level security;
+
 drop policy if exists "Achievements viewable by all" on public.player_achievements;
 create policy "Achievements viewable by all" on public.player_achievements for select using (true);
+
 drop policy if exists "Players manage own achievements" on public.player_achievements;
 create policy "Players manage own achievements" on public.player_achievements for all using (auth.uid() = player_id);
 
 -- Scout profiles
 alter table public.scout_profiles enable row level security;
+
 drop policy if exists "Scout profiles viewable by all" on public.scout_profiles;
 create policy "Scout profiles viewable by all" on public.scout_profiles for select using (true);
+
 drop policy if exists "Scouts can manage own" on public.scout_profiles;
 create policy "Scouts can manage own" on public.scout_profiles for all using (auth.uid() = id);
 
 -- Scout notes: only the scout who wrote them
 alter table public.scout_notes enable row level security;
+
 drop policy if exists "Scouts manage own notes" on public.scout_notes;
 create policy "Scouts manage own notes" on public.scout_notes for all using (auth.uid() = scout_id);
 
 -- Club profiles
 alter table public.club_profiles enable row level security;
+
 drop policy if exists "Club profiles viewable by all" on public.club_profiles;
 create policy "Club profiles viewable by all" on public.club_profiles for select using (true);
+
 drop policy if exists "Clubs can manage own" on public.club_profiles;
 create policy "Clubs can manage own" on public.club_profiles for all using (auth.uid() = id);
 
 -- Feed posts
 alter table public.feed_posts enable row level security;
+
 drop policy if exists "Posts viewable by all" on public.feed_posts;
 create policy "Posts viewable by all" on public.feed_posts for select using (true);
+
 drop policy if exists "Users can insert own posts" on public.feed_posts;
 create policy "Users can insert own posts" on public.feed_posts for insert with check (auth.uid() = author_id);
+
 drop policy if exists "Users can update own posts" on public.feed_posts;
 create policy "Users can update own posts" on public.feed_posts for update using (auth.uid() = author_id);
+
 drop policy if exists "Users can delete own posts" on public.feed_posts;
 create policy "Users can delete own posts" on public.feed_posts for delete using (auth.uid() = author_id);
 
 -- Post likes
 alter table public.post_likes enable row level security;
+
 drop policy if exists "Likes viewable by all" on public.post_likes;
 create policy "Likes viewable by all" on public.post_likes for select using (true);
+
 drop policy if exists "Users manage own likes" on public.post_likes;
 create policy "Users manage own likes" on public.post_likes for all using (auth.uid() = user_id);
 
 -- Post comments
 alter table public.post_comments enable row level security;
+
 drop policy if exists "Comments viewable by all" on public.post_comments;
 create policy "Comments viewable by all" on public.post_comments for select using (true);
+
 drop policy if exists "Users can insert comments" on public.post_comments;
 create policy "Users can insert comments" on public.post_comments for insert with check (auth.uid() = author_id);
+
 drop policy if exists "Users can update own comments" on public.post_comments;
 create policy "Users can update own comments" on public.post_comments for update using (auth.uid() = author_id);
+
 drop policy if exists "Users can delete own comments" on public.post_comments;
 create policy "Users can delete own comments" on public.post_comments for delete using (auth.uid() = author_id);
 
 -- Trials
 alter table public.trials enable row level security;
+
 drop policy if exists "Trials viewable by all" on public.trials;
 create policy "Trials viewable by all" on public.trials for select using (true);
+
 drop policy if exists "Clubs manage own trials" on public.trials;
 create policy "Clubs manage own trials" on public.trials for all using (auth.uid() = club_id);
 
 -- Trial applications
 alter table public.trial_applications enable row level security;
+
 drop policy if exists "Players see own applications" on public.trial_applications;
 create policy "Players see own applications" on public.trial_applications for select using (auth.uid() = player_id);
+
 drop policy if exists "Clubs see applications for their trials" on public.trial_applications;
 create policy "Clubs see applications for their trials" on public.trial_applications for select using (
   exists (select 1 from public.trials where trials.id = trial_applications.trial_id and trials.club_id = auth.uid())
 );
+
 drop policy if exists "Players can apply" on public.trial_applications;
 create policy "Players can apply" on public.trial_applications for insert with check (auth.uid() = player_id);
+
 drop policy if exists "Players can update own apps" on public.trial_applications;
 create policy "Players can update own apps" on public.trial_applications for update using (auth.uid() = player_id);
 
 -- Events
 alter table public.events enable row level security;
+
 drop policy if exists "Events viewable by all" on public.events;
 create policy "Events viewable by all" on public.events for select using (true);
+
 drop policy if exists "Organizers manage own events" on public.events;
 create policy "Organizers manage own events" on public.events for all using (auth.uid() = organizer_id);
 
 -- Event RSVPs
 alter table public.event_rsvps enable row level security;
+
 drop policy if exists "RSVPs viewable by all" on public.event_rsvps;
 create policy "RSVPs viewable by all" on public.event_rsvps for select using (true);
+
 drop policy if exists "Users manage own RSVPs" on public.event_rsvps;
 create policy "Users manage own RSVPs" on public.event_rsvps for all using (auth.uid() = user_id);
 
 -- Saved items
 alter table public.saved_items enable row level security;
+
 drop policy if exists "Users see own saved" on public.saved_items;
 create policy "Users see own saved" on public.saved_items for select using (auth.uid() = user_id);
+
 drop policy if exists "Users manage own saved" on public.saved_items;
 create policy "Users manage own saved" on public.saved_items for all using (auth.uid() = user_id);
 
 -- Notifications
 alter table public.notifications enable row level security;
+
 drop policy if exists "Users see own notifications" on public.notifications;
 create policy "Users see own notifications" on public.notifications for select using (auth.uid() = user_id);
+
 drop policy if exists "Users can update own notifications" on public.notifications;
 create policy "Users can update own notifications" on public.notifications for update using (auth.uid() = user_id);
+
 drop policy if exists "System can insert notifications" on public.notifications;
 create policy "System can insert notifications" on public.notifications for insert with check (true);
 
 -- Verification requests
 alter table public.verification_requests enable row level security;
+
 drop policy if exists "Users see own verification" on public.verification_requests;
 create policy "Users see own verification" on public.verification_requests for select using (auth.uid() = user_id);
+
 drop policy if exists "Users can submit verification" on public.verification_requests;
 create policy "Users can submit verification" on public.verification_requests for insert with check (auth.uid() = user_id);
 
 -- Profile views
 alter table public.profile_views enable row level security;
+
 drop policy if exists "Profile views by all" on public.profile_views;
 create policy "Profile views by all" on public.profile_views for select using (true);
+
 drop policy if exists "Anyone can log view" on public.profile_views;
 create policy "Anyone can log view" on public.profile_views for insert with check (true);
 
@@ -568,8 +612,24 @@ create trigger on_event_rsvp_change
 -- ============================================================
 -- REALTIME
 -- ============================================================
-alter publication supabase_realtime add table public.feed_posts;
-alter publication supabase_realtime add table public.notifications;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'feed_posts'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.feed_posts;
+  END IF;
+END $$;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'notifications'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+  END IF;
+END $$;
 
 -- ============================================================
 -- CONNECTIONS (mutual requests)
@@ -587,10 +647,13 @@ create table if not exists public.connections (
 create index if not exists idx_connections_users on public.connections(sender_id, receiver_id);
 
 alter table public.connections enable row level security;
+
 drop policy if exists "Users see connections involving them" on public.connections;
 create policy "Users see connections involving them" on public.connections for select using (auth.uid() = sender_id or auth.uid() = receiver_id);
+
 drop policy if exists "Users can insert as sender" on public.connections;
 create policy "Users can insert as sender" on public.connections for insert with check (auth.uid() = sender_id);
+
 drop policy if exists "Users can update their connections" on public.connections;
 create policy "Users can update their connections" on public.connections for update using (auth.uid() = receiver_id or auth.uid() = sender_id);
 
@@ -609,11 +672,26 @@ create table if not exists public.messages (
 create index if not exists idx_messages_users on public.messages(sender_id, receiver_id);
 
 alter table public.messages enable row level security;
+
 drop policy if exists "Users see messages involving them" on public.messages;
 create policy "Users see messages involving them" on public.messages for select using (auth.uid() = sender_id or auth.uid() = receiver_id);
+
 drop policy if exists "Users can insert as sender" on public.messages;
 create policy "Users can insert as sender" on public.messages for insert with check (auth.uid() = sender_id);
+
 drop policy if exists "Receiver can update message status" on public.messages;
 create policy "Receiver can update message status" on public.messages for update using (auth.uid() = receiver_id);
 
-alter publication supabase_realtime add table public.messages;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+  END IF;
+END $$;
+
+-- Added for multi-sport capabilities --
+alter table public.profiles add column if not exists sport text default '';
+alter table public.profiles add column if not exists position text default '';
