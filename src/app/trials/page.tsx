@@ -12,18 +12,23 @@ import { Pill } from "@/components/ui/Pill";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/lib/supabase/auth";
-import { fetchTrials } from "@/lib/supabase/db";
+import { fetchTrials, createTrial } from "@/lib/supabase/db";
 import type { Trial } from "@/lib/supabase/types";
+import { Plus } from "lucide-react";
 
 const levelFilters = ["All", "Academy", "Semi-Pro", "Pro"];
 
 export default function TrialsPage() {
-  const { supabase } = useAuth();
+  const { user, profile, supabase } = useAuth();
   const [trials, setTrials] = React.useState<Trial[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState("");
   const [activeLevel, setActiveLevel] = React.useState("All");
   const [statusFilter, setStatusFilter] = React.useState<"open" | "closed">("open");
+  
+  const isClub = profile?.role === "club";
+  const [showForm, setShowForm] = React.useState(false);
+  const [formData, setFormData] = React.useState({ title: "", description: "", location: "", positionNeeded: "", ageGroup: "", level: "academy" });
 
   React.useEffect(() => {
     async function load() {
@@ -38,7 +43,23 @@ export default function TrialsPage() {
     }
     const t = setTimeout(load, 300);
     return () => clearTimeout(t);
-  }, [search, activeLevel, statusFilter, supabase]);
+  }, [search, activeLevel, statusFilter, supabase, showForm]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    await createTrial({
+      clubId: user.id,
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      positionNeeded: formData.positionNeeded,
+      ageGroup: formData.ageGroup,
+      level: formData.level
+    }, supabase);
+    setShowForm(false);
+    setFormData({ title: "", description: "", location: "", positionNeeded: "", ageGroup: "", level: "academy" });
+  }
 
   const demoTrials: Trial[] = loading ? [] : (trials.length > 0 ? trials : [
     { id: "t1", clubId: "c1", clubName: "Sydney FC Academy", title: "U18 Winger Trials", description: "Seeking pace, 1v1 creativity, and crossing under pressure.", location: "Sydney", positionNeeded: "Winger", ageGroup: "U18", level: "academy", trialDate: "2026-04-10", deadline: "2026-03-28", status: "open", maxApplicants: 30, applicantCount: 18, inviteOnly: false, createdAt: "2026-03-01", clubAvatarUrl: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=256&q=80" },
@@ -50,10 +71,51 @@ export default function TrialsPage() {
   return (
     <AppShell>
       <div className="space-y-5 animate-fade-in">
+        <Card className="p-5 flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">Trials</h1>
+            <p className="mt-1 text-sm text-scouthub-muted">Browse trial listings, apply quickly, and track applications</p>
+          </div>
+          {isClub && (
+            <Button onClick={() => setShowForm(!showForm)}>
+              {showForm ? "Cancel" : <><Plus className="h-4 w-4 mr-1" /> Post Trial</>}
+            </Button>
+          )}
+        </Card>
+
+        {showForm && isClub && (
+          <Card className="p-5 animate-slide-up border-scouthub-green/40 ring-1 ring-scouthub-green/10 bg-scouthub-green/5">
+            <h2 className="text-lg font-extrabold mb-4">Post a New Trial</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold block mb-1">Title</label>
+                  <input required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="e.g U18 Open Assessment" className="h-10 w-full rounded-xl bg-white px-3 text-sm ring-1 ring-black/10 focus:ring-scouthub-green/20" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold block mb-1">Location</label>
+                  <input required value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} placeholder="e.g Sydney Olympic Park" className="h-10 w-full rounded-xl bg-white px-3 text-sm ring-1 ring-black/10 focus:ring-scouthub-green/20" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold block mb-1">Position Needed</label>
+                  <input required value={formData.positionNeeded} onChange={e => setFormData({ ...formData, positionNeeded: e.target.value })} placeholder="e.g Striker" className="h-10 w-full rounded-xl bg-white px-3 text-sm ring-1 ring-black/10 focus:ring-scouthub-green/20" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold block mb-1">Age Group</label>
+                  <input required value={formData.ageGroup} onChange={e => setFormData({ ...formData, ageGroup: e.target.value })} placeholder="e.g U18" className="h-10 w-full rounded-xl bg-white px-3 text-sm ring-1 ring-black/10 focus:ring-scouthub-green/20" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="text-xs font-semibold block mb-1">Description</label>
+                  <textarea required value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full rounded-xl bg-white p-3 text-sm ring-1 ring-black/10 focus:ring-scouthub-green/20" rows={2} />
+                </div>
+              </div>
+              <Button type="submit" className="w-full">Create Trial Listing</Button>
+            </form>
+          </Card>
+        )}
+
         <Card className="p-5">
-          <h1 className="text-2xl font-extrabold tracking-tight">Trials</h1>
-          <p className="mt-1 text-sm text-scouthub-muted">Browse trial listings, apply quickly, and track applications</p>
-          <div className="relative mt-4">
+          <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-scouthub-muted" />
             <input value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search trials..."

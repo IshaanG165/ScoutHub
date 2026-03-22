@@ -63,7 +63,6 @@ export function FeedPage() {
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_340px]">
       <section className="space-y-5">
         <StoriesStrip />
-        <HeroLiveCard />
         <ComposerCard />
 
         <TrialOpportunityCard />
@@ -78,52 +77,52 @@ export function FeedPage() {
           </p>
           <div className="space-y-5">
 
-        <FeedPostCard
-          id="club-sydney-fc-u18-trials"
-          author={{
-            name: "Sydney FC Academy",
-            meta: "Official Club",
-            verified: true,
-            avatar:
-              "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=256&q=80",
-          }}
-          time="2h ago"
-          title="Trials for U18 Winger/Left Back — Apply Now!"
-          body="We’re inviting selected players for an invite-only assessment. Strong 1v1 ability, transition speed, and tactical discipline preferred."
-          match={94}
-        />
+            <FeedPostCard
+              id="club-sydney-fc-u18-trials"
+              author={{
+                name: "Sydney FC Academy",
+                meta: "Official Club",
+                verified: true,
+                avatar:
+                  "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=256&q=80",
+              }}
+              time="2h ago"
+              title="Trials for U18 Winger/Left Back — Apply Now!"
+              body="We’re inviting selected players for an invite-only assessment. Strong 1v1 ability, transition speed, and tactical discipline preferred."
+              match={94}
+            />
 
-        <FeedPostCard
-          id="player-kai-tanaka-training"
-          author={{
-            name: "Kai Tanaka",
-            meta: "Point Guard · Melbourne",
-            verified: false,
-            avatar:
-              "https://images.unsplash.com/photo-1520975958225-15f85f3a2f8f?auto=format&fit=crop&w=256&q=80",
-          }}
-          time="12h ago"
-          title="Training Session — Speed & Agility Drills"
-          body="Small improvements this week: first-step acceleration and repeat sprint consistency. Clips attached."
-          media="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-          mediaType="video"
-        />
+            <FeedPostCard
+              id="player-kai-tanaka-training"
+              author={{
+                name: "Kai Tanaka",
+                meta: "Point Guard · Melbourne",
+                verified: false,
+                avatar:
+                  "https://images.unsplash.com/photo-1520975958225-15f85f3a2f8f?auto=format&fit=crop&w=256&q=80",
+              }}
+              time="12h ago"
+              title="Training Session — Speed & Agility Drills"
+              body="Small improvements this week: first-step acceleration and repeat sprint consistency. Clips attached."
+              media="/zlatan.mp4"
+              mediaType="video"
+            />
 
-        <FeedPostCard
-          id="scout-elite-u18-forwards"
-          author={{
-            name: "Scout Elite",
-            meta: "Verified Scout",
-            verified: true,
-            avatar:
-              "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=256&q=80",
-          }}
-          time="1d ago"
-          title="What we look for in versatile athletes"
-          body="Movement without the ball, scanning before receiving, and repeatability under pressure. Profiles with consistent match footage stand out. Check out this phenomenal breakdown."
-          media="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-          mediaType="video"
-        />
+            <FeedPostCard
+              id="scout-elite-u18-forwards"
+              author={{
+                name: "Scout Elite",
+                meta: "Verified Scout",
+                verified: true,
+                avatar:
+                  "https://images.unsplash.com/photo-1508341591423-4347099e1f19?auto=format&fit=crop&w=256&q=80",
+              }}
+              time="1d ago"
+              title="What we look for in versatile athletes"
+              body="Movement without the ball, scanning before receiving, and repeatability under pressure. Profiles with consistent match footage stand out. Check out this phenomenal breakdown."
+              media="/ronaldo.mp4"
+              mediaType="video"
+            />
           </div>
         </div>
       </section>
@@ -173,9 +172,9 @@ export function FeedPage() {
                     </div>
                   </div>
                   <div className="text-xs text-scouthub-muted capitalize">{u.role} {u.location ? `· ${u.location}` : ""}</div>
-                  <button 
+                  <button
                     disabled={sentRequests.has(u.id)}
-                    onClick={() => handleSendRequest(u.id)} 
+                    onClick={() => handleSendRequest(u.id)}
                     className="absolute bottom-3 right-3 text-xs font-semibold text-scouthub-green hover:underline">
                     {sentRequests.has(u.id) ? "Request Sent" : "Send Request"}
                   </button>

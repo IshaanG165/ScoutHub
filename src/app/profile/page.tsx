@@ -49,6 +49,10 @@ function ProfileContent() {
   const [editLocation, setEditLocation] = React.useState("");
   const [pageLoading, setPageLoading] = React.useState(true);
   const [connectionStatus, setConnectionStatus] = React.useState<string | null>(null);
+  const [endorsements, setEndorsements] = React.useState(12);
+  const [hasEndorsed, setHasEndorsed] = React.useState(false);
+  
+  const isClubViewer = profile?.role === "club";
 
   React.useEffect(() => {
     if (!user || !supabase || !targetId) { 
@@ -127,8 +131,15 @@ function ProfileContent() {
   async function handleConnect() {
     if (!user || !supabase || !targetId) return;
     setConnectionStatus("pending");
-    await sendConnectionRequest(user.id, targetId, supabase);
+    await sendConnectionRequest(user.id, targetId as string, supabase);
     toast("success", "Connection request sent!");
+  }
+
+  function handleEndorse() {
+    if (hasEndorsed) return;
+    setHasEndorsed(true);
+    setEndorsements(e => e + 1);
+    toast("success", `You endorsed ${displayProfile?.fullName}!`);
   }
 
   if (loading || pageLoading) {
@@ -204,11 +215,12 @@ function ProfileContent() {
                   {displayProfile.verified && <CheckCircle2 className="h-5 w-5 text-scouthub-green" />}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-scouthub-muted">
-                  <Badge className="capitalize">{position || displayProfile.role}</Badge>
+                  <Badge className="capitalize">{displayProfile.position || displayProfile.role}</Badge>
                   {displayProfile.location && (
                     <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{displayProfile.location}</span>
                   )}
                   {playerData?.currentClub && <span>· {playerData.currentClub}</span>}
+                  <Badge className="bg-scouthub-gold/10 text-scouthub-gold ring-scouthub-gold/20"><Star className="h-3.5 w-3.5 mr-1" /> {endorsements} Endorsements</Badge>
                 </div>
               </div>
               
@@ -221,6 +233,11 @@ function ProfileContent() {
                  </div>
               ) : (
                  <div className="flex gap-2">
+                   {isClubViewer && (
+                     <Button size="sm" variant={hasEndorsed ? "secondary" : "primary"} onClick={handleEndorse} disabled={hasEndorsed} className={hasEndorsed ? "" : "bg-scouthub-gold hover:bg-scouthub-gold/90 text-scouthub-dark"}>
+                       {hasEndorsed ? "Endorsed" : <><Star className="h-4 w-4 mr-1" /> Endorse</>}
+                     </Button>
+                   )}
                    {connectionStatus === "accepted" ? (
                      <Link href={`/messages?userId=${targetId}`}>
                        <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Message</Button>
